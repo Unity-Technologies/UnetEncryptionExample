@@ -4,3 +4,4 @@ obj
 *.sln
 *.userprefs
 *.csproj
+.vs
