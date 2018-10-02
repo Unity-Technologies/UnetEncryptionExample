@@ -1,4 +1,5 @@
 
+
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
 #include <map>
@@ -7,6 +8,10 @@
 #include <vector>
 #include <algorithm>
 #include <uuid/uuid.h>
+
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/syscall.h>
 
 #include "Packet.h" // From ../../Shared/
 
@@ -134,6 +139,9 @@ extern "C" int AddConnectionKeys (
 	uint32_t iv_length)
 {
 
+	pid_t tid = syscall (SYS_gettid);
+	Log ("AddConnectionKeys on thread %d\n", tid);
+
 	KeySet k;
 	memset (&k, 0, sizeof (KeySet));
 
@@ -228,6 +236,9 @@ extern "C" int Encrypt(
 	int connection_id,
 	bool isConnect)
 {
+	pid_t tid = syscall (SYS_gettid);
+	Log ("Encrypt on thread %d\n", tid);
+
 	// This is what we'll return.
 	// Nonzero means failure.
 	// We assume failure, and set to zero on success.
