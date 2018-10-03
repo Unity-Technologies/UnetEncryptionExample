@@ -1,12 +1,13 @@
 
+
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
-#include <map>
-#include <utility>
 #include <string.h>
 #include <vector>
 #include <algorithm>
 #include <uuid/uuid.h>
+#include <thread>
+#include <mutex>
 
 #include "Packet.h" // From ../../Shared/
 
@@ -61,6 +62,11 @@ static ConnectionKeyStore g_keysForConnections;
 
 // UUID for next connection
 static uuid_t g_uuidForNextConnection;
+
+// Mutex for modifying or accessing any of the above data structures.
+typedef std::mutex mutex_t;
+static mutex_t g_mutex;
+typedef std::lock_guard<mutex_t> lock_t;
 
 extern "C" int SetLogFunc (LogFunc f)
 {
@@ -133,6 +139,7 @@ extern "C" int AddConnectionKeys (
 	uint8_t * iv,
 	uint32_t iv_length)
 {
+	lock_t lock (g_mutex);
 
 	KeySet k;
 	memset (&k, 0, sizeof (KeySet));
@@ -183,6 +190,7 @@ extern "C" int AddConnectionKeys (
 
 extern "C" int SetUuidForNextConnection (const char * uuid_str)
 {
+	lock_t lock (g_mutex);
 	uuid_t new_uuid;
 	int ok = uuid_parse(uuid_str, new_uuid);
 	if (ok != 0) {
@@ -199,6 +207,7 @@ extern "C" int SetUuidForNextConnection (const char * uuid_str)
 
 extern "C" int RemoveConnectionKeys (const char * uuid_str)
 {
+	lock_t lock (g_mutex);
 	uuid_t uuid;
 	int ok = uuid_parse(uuid_str, uuid);
 	if (ok != 0) {
@@ -228,6 +237,8 @@ extern "C" int Encrypt(
 	int connection_id,
 	bool isConnect)
 {
+	lock_t lock (g_mutex);
+
 	// This is what we'll return.
 	// Nonzero means failure.
 	// We assume failure, and set to zero on success.
@@ -414,6 +425,8 @@ extern "C" int Decrypt(
 	int & dest_len,
 	int & context)
 {
+	lock_t lock (g_mutex);
+
 	int ret = 1; // Our return value.
 	int ok = 0; // Value from EVP_* functions.
 
@@ -566,6 +579,8 @@ cleanup:
 
 extern "C" void ConnectionIdAssigned (int context, unsigned short connectionId)
 {
+	lock_t lock (g_mutex);
+
 	// Erase any existing assignment for this connectionId.
 	g_keysForConnections.erase (
 		std::remove_if(
@@ -603,6 +618,7 @@ extern "C" void ConnectionIdAssigned (int context, unsigned short connectionId)
 
 extern "C" unsigned short SafeMaxPacketSize(unsigned short mtu)
 {
+	lock_t lock (g_mutex);
 	// Subtract the size of the header.
 	mtu -= sizeof(PacketHeader);
 

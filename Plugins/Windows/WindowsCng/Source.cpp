@@ -9,6 +9,8 @@
 #include <vector>
 #include <algorithm>
 #include <rpc.h>
+#include <thread>
+#include <mutex>
 
 #ifdef _XBOX_ONE
 #include <xdk.h>
@@ -143,6 +145,10 @@ static ConnectionKeyStore g_keysForConnections;
 static UUID g_uuidForNextConnection;
 
 
+typedef std::mutex mutex_t;
+static mutex_t g_mutex;
+typedef std::lock_guard<mutex_t> lock_t;
+
 // Handles to BCrypt algorithms.
 static BCRYPT_ALG_HANDLE g_algo = 0;
 static BCRYPT_ALG_HANDLE g_sha256 = 0;
@@ -193,6 +199,7 @@ static LogStream g_log;
 
 extern "C" __declspec(dllexport) void SetLogFunc(LogFunc f)
 {
+	lock_t lock(g_mutex);
 	g_log_cb = f;
 	g_log << "Set logging func.  This should be the first message you see." << endl;
 }
@@ -236,6 +243,7 @@ static HRESULT parse_uuid_from_utf8(UUID * u, const char * str)
 
 extern "C" __declspec(dllexport) int UnetEncryptionInit()
 {
+	lock_t lock(g_mutex);
 	NTSTATUS err = 0;
 	
 	err = BCryptOpenAlgorithmProvider(&g_algo, BCRYPT_AES_ALGORITHM, NULL, 0);
@@ -271,6 +279,8 @@ extern "C" __declspec(dllexport) int AddConnectionKeys(
 	uint8_t * iv,
 	uint32_t iv_length)
 {
+	lock_t lock(g_mutex);
+
 	if (!uuid_str)
 		uuid_str = "";
 
@@ -347,6 +357,8 @@ extern "C" __declspec(dllexport) int AddConnectionKeys(
 extern "C" __declspec(dllexport) int RemoveConnectionKeys(
 	const char * uuid_str)
 {
+	lock_t lock(g_mutex);
+
 	UUID u;
 	HRESULT err = parse_uuid_from_utf8(&u, uuid_str);
 	if (err)
@@ -377,6 +389,8 @@ extern "C" __declspec(dllexport) int RemoveConnectionKeys(
 
 extern "C" __declspec(dllexport) int SetUuidForNextConnection(const char * uuid_str)
 {
+	lock_t lock(g_mutex);
+
 	UUID u;
 	HRESULT err = parse_uuid_from_utf8(&u, uuid_str);
 	if (err)
@@ -457,6 +471,8 @@ extern "C" __declspec(dllexport) int __stdcall Decrypt(
 	int & dest_len,
 	int & context)
 {
+	lock_t lock(g_mutex);
+
 	// Keep the input value handy, to avoid confusion.
 	const size_t dest_capacity = dest_len;
 
@@ -542,6 +558,8 @@ extern "C" __declspec(dllexport) int __stdcall  Encrypt(
 	int connection_id,
 	bool isConnect)
 {
+	lock_t lock(g_mutex);
+
 	// dest_len is the capacity coming in, and the amount used on exit.
 	// Grab the input value to avoid confusion.
 	const size_t dest_capacity = dest_len;
@@ -663,6 +681,8 @@ extern "C" __declspec(dllexport) int __stdcall  Encrypt(
 
 extern "C" __declspec (dllexport) void __stdcall ConnectionDropped(int connection_id)
 {
+	lock_t lock(g_mutex);
+
 	auto it = std::remove_if(
 		g_keysForConnections.begin(),
 		g_keysForConnections.end(),
@@ -676,6 +696,8 @@ extern "C" __declspec (dllexport) void __stdcall ConnectionDropped(int connectio
 
 extern "C" __declspec(dllexport) unsigned short __stdcall SafeMaxPacketSize(unsigned short mtu)
 {
+	lock_t lock(g_mutex);
+
 	// Subtract the size of the header.
 	mtu -= sizeof(PacketHeader);
 
@@ -691,6 +713,8 @@ extern "C" __declspec(dllexport) unsigned short __stdcall SafeMaxPacketSize(unsi
 
 extern "C" __declspec(dllexport) void __stdcall ConnectionIdAssigned(int context, unsigned short connectionId)
 {
+	lock_t lock(g_mutex);
+
 	// g_log << "Associating KeySet " << context << " with connection id " << connectionId << endl;
 
 
