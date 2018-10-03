@@ -1,6 +1,6 @@
 
 lib=libUnetEncryption.so
-deployed_lib=$(lib)
+deployed_lib=../../../ExampleProject/Assets/Plugins/Linux/$(lib)
 # Put your output directory here (e.g. Assets/Plugins dir of your project)
 
 CXXFLAGS+=--std=c++11
@@ -8,7 +8,7 @@ CXXFLAGS+=--std=c++11
 CXXFLAGS+=-fPIC
 LDFLAGS+=-shared -fPIC
 
-LDLIBS+=-lcrypto -luuid
+LDLIBS+=-lcrypto -luuid -lpthread
 
 CPPFLAGS+=-I../../Shared/
 
@@ -30,4 +30,6 @@ $(deployed_lib) : $(lib)
 
 .PHONY: clean
 clean:
-	$(RM) $(objs) $(lib) $(deployed_lib)
+	$(RM) $(objs) $(lib)
+	@# We don't delete $(deployed_lib), because it could be in a Unity project.
+	@# Deleting it would make Unity delete the .meta, losing the user's config.
