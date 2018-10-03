@@ -8,8 +8,6 @@
 #include <uuid/uuid.h>
 #include <thread>
 #include <mutex>
-#include <iostream>
-#include <sstream>
 
 #include "Packet.h" // From ../../Shared/
 
@@ -66,9 +64,9 @@ static ConnectionKeyStore g_keysForConnections;
 static uuid_t g_uuidForNextConnection;
 
 // Mutex for modifying or accessing any of the above data structures.
-typedef std::mutex g_mutex_t;
-g_mutex_t g_mutex;
-typedef std::lock_guard<g_mutex_t> lock_t;
+typedef std::mutex mutex_t;
+static mutex_t g_mutex;
+typedef std::lock_guard<mutex_t> lock_t;
 
 extern "C" int SetLogFunc (LogFunc f)
 {
