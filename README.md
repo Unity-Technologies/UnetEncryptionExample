@@ -3,7 +3,7 @@
 This repository contains a reference implementation of a Unet encryption plugin, as well as a very small example Unity project that uses the plugin.
 
 
-(This is a link)[docs/README.md]
+(This is a link)[docs/other.md]
 
 
 ## Encryption Plugins:  Required Functions
