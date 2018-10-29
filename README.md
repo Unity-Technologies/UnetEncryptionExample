@@ -3,6 +3,9 @@
 This repository contains a reference implementation of a Unet encryption plugin, as well as a very small example Unity project that uses the plugin.
 
 
+(This is a link)[docs/README.md]
+
+
 ## Encryption Plugins:  Required Functions
 
 Encryption plugins must provide the following functions.  These are the functions that will be called by the Unity runtime itself.  Plugins will typically provide _additional_ functions to be called from the User's C# code, for example for registering keys.
