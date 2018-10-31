@@ -18,4 +18,4 @@ To use the example plugin, call `UnetEncryptionInit` after calling `NetworkTrans
 
 On the client, call `SetUuidForNextConnection` before connecting, passing in the UUID (as a string) of the key set to use.
 
-You can optionally call `SetLogFunc`, passing in a C# callback function that receives a string. The callback will be fired on error conditions, which can be useful for debugging. On non-error conditions, the plugin is silent. Do not enable the callback in release builds, otherwise attackers could launch a denial-of-service attack on your server, by sending junk packets and causing extreme amounts of logging to the player log.
+You can optionally call `SetLogFunc`, passing in a C# callback function that receives a string. The callback will be fired on error conditions, which can be useful for debugging. On non-error conditions, the plugin is silent. **Do not enable the callback in release builds**, otherwise attackers could launch a denial-of-service attack on your server, by sending junk packets and causing extreme amounts of logging to the player log.
