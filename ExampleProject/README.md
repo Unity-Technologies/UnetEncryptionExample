@@ -8,7 +8,7 @@ This project serves as an example of using the plugin.
 
 ### Plugin Compilation
 
-Compile the plugin for each platform you wish to use.  For Windows, load and compile the `.sln`.  For Linux, run `make` in the `Plugins/Linux/OpenSSL`.  Place the compiled plugins (*.dll, *.so) in `Assets/Plugins`.  In the inspector, set each plugin to be usable from that platform only (e.g. Set the Linux .so file to be runnable from Linux only).
+Compile the plugin for each platform you wish to use.  For Windows, load and compile the `.sln`.  For Linux, run `make` in the `Plugins/Linux/OpenSSL` directory.  Place the compiled plugins (*.dll, *.so) in `Assets/Plugins`.  In the inspector, set each plugin to be usable from that platform only (e.g. Set the Linux .so file to be runnable from Linux only).
 
 
 ### Server
