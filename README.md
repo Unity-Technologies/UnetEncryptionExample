@@ -4,6 +4,8 @@ This repository contains a reference implementation of a Unet encryption plugin,
 
 The following documentation pages exist:
 
+* [Instructions](docs/instructions.md) shows to to tell Unity to use _any_ encryption plugin, as well as instructions specific to the example plugin.
+
 * [Functions](docs/functions.md) lists the functions that any encryption plugin must provide, as well as the extra functions provided by the example plugin.
 
 * [Example Project](ExampleProject/README.md) has instructions for running the example project that uses the plugin.
