@@ -20,7 +20,7 @@ When a packet is received, the following actions are taken:
     1. Otherwise, we record this packet's sequence number as the highest sequence number received, and set `bitset[0]`.
 1. If the sequence number of the received packet is lower than the highest received so far, then this is an _out-of-order_ packet; it is older than the newest one that the recipient has seen at that point. It might be a replayed packet that we have received already, either due to an attack or just innocent packet duplication somewhere along the way.
     1. We use the bitset to see if that sequence number has already been received.
-        * For example if the highest received packet is #354 and we receive packet #352, we check bitset[2] (that is, the third bit).
+        * For example if the highest received packet is #354 and we receive packet #352, we check `bitset[2]` (that is, the third bit).
     1. If the packet has been received already, then it is dropped with **no further processing**.
     1. Likewise, if the packet is so old that it is not even in the bitset (i.e. it is more than 512 behind) then it is dropped with **no further processing**.
     1. Otherwise, if the packet has *not* been received already, then the corresponding bit it set in the bitset and the packet is processed.
