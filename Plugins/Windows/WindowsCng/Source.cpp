@@ -464,7 +464,7 @@ static void put_bytes_from_uuid(uint8_t * dest, const UUID * u)
 
 
 
-extern "C" __declspec(dllexport) int __stdcall Decrypt(
+extern "C" __declspec(dllexport) int __stdcall UNetEncryptionLib_Decrypt(
 	void * payload,
 	int payload_len,
 	void * dest,
@@ -550,7 +550,7 @@ extern "C" __declspec(dllexport) int __stdcall Decrypt(
 }
 
 
-extern "C" __declspec(dllexport) int __stdcall  Encrypt(
+extern "C" __declspec(dllexport) int __stdcall UNetEncryptionLib_Encrypt(
 	void * payload,
 	int payload_len,
 	void * dest,
@@ -694,7 +694,7 @@ extern "C" __declspec (dllexport) void __stdcall ConnectionDropped(int connectio
 
 
 
-extern "C" __declspec(dllexport) unsigned short __stdcall SafeMaxPacketSize(unsigned short mtu)
+extern "C" __declspec(dllexport) unsigned short __stdcall UNetEncryptionLib_SafeMaxPacketSize(unsigned short mtu)
 {
 	lock_t lock(g_mutex);
 
@@ -711,7 +711,7 @@ extern "C" __declspec(dllexport) unsigned short __stdcall SafeMaxPacketSize(unsi
 
 
 
-extern "C" __declspec(dllexport) void __stdcall ConnectionIdAssigned(int context, unsigned short connectionId)
+extern "C" __declspec(dllexport) void __stdcall UNetEncryptionLib_ConnectionIdAssigned(int context, unsigned short connectionId)
 {
 	lock_t lock(g_mutex);
 

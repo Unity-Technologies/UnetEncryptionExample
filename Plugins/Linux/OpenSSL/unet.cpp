@@ -229,7 +229,7 @@ extern "C" int RemoveConnectionKeys (const char * uuid_str)
 	return 0;
 }
 
-extern "C" int Encrypt(
+extern "C" int UNetEncryptionLib_Encrypt(
 	void * payload,
 	int payload_len,
 	void * dest,
@@ -418,7 +418,7 @@ cleanup:
 
 
 
-extern "C" int Decrypt(
+extern "C" int UNetEncryptionLib_Decrypt(
 	void * payload,
 	int payload_len,
 	void * dest,
@@ -577,7 +577,7 @@ cleanup:
 }
 
 
-extern "C" void ConnectionIdAssigned (int context, unsigned short connectionId)
+extern "C" void UNetEncryptionLib_ConnectionIdAssigned (int context, unsigned short connectionId)
 {
 	lock_t lock (g_mutex);
 
@@ -616,7 +616,7 @@ extern "C" void ConnectionIdAssigned (int context, unsigned short connectionId)
 
 
 
-extern "C" unsigned short SafeMaxPacketSize(unsigned short mtu)
+extern "C" unsigned short UNetEncryptionLib_SafeMaxPacketSize(unsigned short mtu)
 {
 	lock_t lock (g_mutex);
 	// Subtract the size of the header.

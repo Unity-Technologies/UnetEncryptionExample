@@ -5,10 +5,10 @@
 
 Encryption plugins **must** provide the following functions.  Loading will fail if any of them are not defined.  These are the functions that will be called by the Unity runtime itself.  Plugins will typically provide _additional_ functions to be called from the User's C# code, for example for registering keys.  The extra functions provided by the example plugin are listed [further down this document](#example-plugin)
 
-### Encrypt
+### UNetEncryptionLib_Encrypt
 
 ```C
-int Encrypt(
+int UNetEncryptionLib_Encrypt(
 	void * payload,
 	int payload_len,
 	void * dest,
@@ -31,10 +31,10 @@ Perform encryption.  This is called whenever a packet is to be sent.
 `Encrypt` must return zero on success.  On any other return value, the runtime will drop the packet without sending it.
 
 
-### Decrypt
+### UNetEncryptionLib_Decrypt
 
 ```C
-int Decrypt(
+int UNetEncryptionLib_Decrypt(
 	void * payload,
 	int payload_len,
 	void * dest,
@@ -56,9 +56,9 @@ Perform decryption.  This is called whenever a packet is received.
 `Decrypt` must return zero on success.  On any other return value, the packet is dropped without being processed further.
 
 
-### SafeMaxPacketSize
+### UNetEncryptionLib_SafeMaxPacketSize
 ```C
-unsigned short SafeMaxPacketSize (unsigned short mtu);
+unsigned short UNetEncryptionLib_SafeMaxPacketSize (unsigned short mtu);
 ```
 
 The developer is expected to call this function themselves, to modify `ConnectionConfig.PacketSize` (also known as the _maximum transmission unit_, or MTU) **before** calling `NetworkTransport.AddHost`.
@@ -77,10 +77,10 @@ Unity calls this function once, but does nothing with the result.  **This is a l
 
 The maximum amount of cleartext that should be provided to a single call to [Encrypt](#Encrypt), in order for the plugin to generate packets not larger than the MTU.
 
-### ConnectionIdAssigned
+### UNetEncryptionLib_ConnectionIdAssigned
 
 ```C
-void ConnectionIdAssigned(
+void UNetEncryptionLib_ConnectionIdAssigned(
   int key_id,
   unsigned short connection_id);
 ```
@@ -90,18 +90,6 @@ This is called on the server, when a new connection has been accepted.
 #### Parameters
 * **key_id** The key identifier, which was written by the corresponding previous call to `Decrypt` for this packet.
 * **connection_id** The connection id that will be used from this point forth.  In particular, as a parameter to subsequent `Encrypt` calls when sending packets back to the client.
-
-### ConnectionDropped
-
-```C
-void ConnectionDropped(int connection_id);
-```
-
-This is called on the server and the client when a connection is dropped.
-
-#### Parameters
-
-* **connection_id** The identifier for this connection, as previously passed into `Encrypt`, `Decrypt` and (on the server) `ConnectionIdAssigned`.
 
 ## Example Plugin
 
@@ -203,4 +191,16 @@ The UUID of the KeySet is written into the packet, so the server will know which
 #### Return Value
 
 Zero on success.  Nonzero on error (e.g. unparseable UUID).
+
+### ConnectionDropped
+
+```C
+void ConnectionDropped(int connection_id);
+```
+
+This is called on the server and the client when a connection is dropped.
+
+#### Parameters
+
+* **connection_id** The identifier for this connection, as previously passed into `Encrypt`, `Decrypt` and (on the server) `ConnectionIdAssigned`.
 
